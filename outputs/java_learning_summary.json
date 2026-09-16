@@ -1,0 +1,59 @@
+{
+  "n_knowledge_points": 24,
+  "n_resources": 90,
+  "n_learners": 120,
+  "train_epochs": 3,
+  "multi_seed_final_mean_reward": 10.7524,
+  "multi_seed_final_std_reward": 0.2091,
+  "multi_seed_final_ma_reward": 10.7505,
+  "multi_seed_best_mean_reward": 10.863,
+  "multi_seed_best_episode": 241,
+  "elapsed_seconds": 151.8,
+  "table1": {
+    "KG-RL": {
+      "Precision": 0.6792,
+      "Recall": 0.7602,
+      "F1-score": 0.717,
+      "MAE": 0.1729,
+      "RMSE": 0.3073,
+      "G": 7.211,
+      "AMG": 0.4673
+    },
+    "MC": {
+      "Precision": 0.5514,
+      "Recall": 0.6254,
+      "F1-score": 0.5832,
+      "MAE": 0.2123,
+      "RMSE": 0.3589,
+      "G": 6.716,
+      "AMG": 0.428
+    },
+    "CF": {
+      "Precision": 0.6111,
+      "Recall": 0.7798,
+      "F1-score": 0.6843,
+      "MAE": 0.2313,
+      "RMSE": 0.3721,
+      "G": 6.549,
+      "AMG": 0.409
+    },
+    "Rule": {
+      "Precision": 0.4319,
+      "Recall": 0.5942,
+      "F1-score": 0.4977,
+      "MAE": 0.2624,
+      "RMSE": 0.391,
+      "G": 5.709,
+      "AMG": 0.3778
+    },
+    "KG-H": {
+      "Precision": 0.6875,
+      "Recall": 0.6324,
+      "F1-score": 0.6553,
+      "MAE": 0.1817,
+      "RMSE": 0.3128,
+      "G": 6.583,
+      "AMG": 0.4585
+    }
+  }
+}

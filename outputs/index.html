@@ -1,0 +1,2598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Learning Recommendation System Dashboard</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --navy-dark: #0f172a;
+            --navy-light: #1e293b;
+            --blue-accent: #2563eb;
+            --card-bg: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --radius: 14px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: "Outfit", "Inter", "Segoe UI", Arial, sans-serif;
+            line-height: 1.5;
+            padding-bottom: 2rem;
+        }
+
+        /* Sticky Navigation Bar */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 0.75rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+
+        .navbar-brand-logo {
+            background: linear-gradient(135deg, var(--blue-accent) 0%, #4f46e5 100%);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: #ffffff;
+            font-size: 0.95rem;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 0.5rem;
+            list-style: none;
+        }
+
+        .navbar-menu a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .navbar-menu a:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .navbar-menu a.active {
+            color: #ffffff;
+            background-color: var(--blue-accent);
+        }
+
+        /* SPA Page Transition Classes */
+        .spa-page {
+            display: none;
+        }
+
+        .spa-page.active {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Main Container */
+        .dashboard-container {
+            max-width: 1000px;
+            margin: 2.5rem auto;
+            padding: 0 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Rounded Cards */
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(37, 99, 235, 0.15);
+        }
+
+        /* Large Hero Header Section */
+        .hero-card {
+            background: linear-gradient(135deg, #090d16 0%, #1a2436 100%);
+            color: #ffffff;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            border: none;
+        }
+
+        .hero-card:hover {
+            transform: none;
+            box-shadow: var(--shadow-hover);
+        }
+
+        .hero-badge {
+            padding: 0.35rem 0.85rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .hero-badge.status-success {
+            background-color: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+        }
+
+        .hero-status-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.75rem;
+        }
+
+        .hero-subtitle {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #94a3b8;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .hero-card h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.03em;
+        }
+
+        .hero-description {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            font-weight: 400;
+            margin-top: 0.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+
+        .hero-stat-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            transition: var(--transition);
+        }
+
+        .hero-stat-card:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .hero-stat-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .hero-stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        /* Section Header Layout */
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+        }
+
+        .card-icon {
+            background-color: rgba(37, 99, 235, 0.08);
+            color: var(--blue-accent);
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .card-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--navy-dark);
+            letter-spacing: -0.02em;
+        }
+
+        /* Section Body Layout */
+        .card-body {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            background-color: var(--bg-color);
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 1.75rem;
+            text-align: center;
+            font-style: italic;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100px;
+            gap: 0.5rem;
+        }
+
+        .card-body svg {
+            width: 28px;
+            height: 28px;
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, var(--border-color) 50%, transparent 100%);
+            border: none;
+            margin: 0.25rem 0;
+        }
+
+        /* Stat Cards for Simulation Summary */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin-top: 0.5rem;
+            width: 100%;
+        }
+
+        .stat-card {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            border-color: rgba(37, 99, 235, 0.2);
+        }
+
+        .stat-card-icon {
+            background-color: rgba(37, 99, 235, 0.08);
+            color: var(--blue-accent);
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stat-card-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .stat-card-info {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .stat-card-title {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-card-value {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--navy-dark);
+            line-height: 1.1;
+        }
+
+        /* Hero Compact Status & Header Row */
+        .hero-status-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.75rem;
+        }
+
+        .hero-badge.status-success {
+            background-color: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+        }
+
+        .hero-subtitle {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #94a3b8;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .hero-description {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            font-weight: 400;
+            margin-top: 0.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+
+        .hero-stat-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            transition: var(--transition);
+        }
+
+        .hero-stat-card:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .hero-stat-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .hero-stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        /* AI Recommendation Summary Layout */
+        .rec-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.25rem;
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .rec-info-item {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            transition: var(--transition);
+        }
+
+        .rec-info-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            border-color: rgba(37, 99, 235, 0.15);
+        }
+
+        .rec-info-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .rec-info-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--navy-dark);
+        }
+
+        .rec-reason-card {
+            background-color: rgba(37, 99, 235, 0.03);
+            border: 1px solid rgba(37, 99, 235, 0.1);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            text-align: left;
+            margin-top: 0.5rem;
+        }
+
+        .rec-reason-icon {
+            color: var(--blue-accent);
+            flex-shrink: 0;
+            margin-top: 0.15rem;
+        }
+
+        .rec-reason-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .rec-reason-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--navy-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .rec-reason-text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Prerequisite Timeline Path */
+        .path-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            max-width: 600px;
+            margin: 1.5rem auto;
+        }
+
+        .path-node {
+            background-color: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            transition: var(--transition);
+        }
+
+        .path-node:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .path-node.mastered {
+            border-color: #10b981;
+            background-color: rgba(16, 185, 129, 0.02);
+        }
+
+        .path-node.active {
+            border-color: var(--blue-accent);
+            background-color: rgba(37, 99, 235, 0.04);
+            box-shadow: 0 0 12px rgba(37, 99, 235, 0.15);
+        }
+
+        .path-node.weak {
+            border-color: #ef4444;
+            background-color: rgba(239, 68, 68, 0.02);
+        }
+
+        .path-node-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+        }
+
+        .path-node.mastered .path-node-badge {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+        }
+
+        .path-node.active .path-node-badge {
+            background-color: rgba(37, 99, 235, 0.15);
+            color: var(--blue-accent);
+        }
+
+        .path-node.weak .path-node-badge {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        .path-node-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--navy-dark);
+            flex-grow: 1;
+            text-align: left;
+        }
+
+        .path-node-score {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .path-arrow {
+            color: var(--text-muted);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 24px;
+            opacity: 0.6;
+        }
+
+        /* Completed & Weak Topics styles */
+        .topic-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 0.75rem;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .topic-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .topic-item:hover {
+            transform: translateY(-1px);
+            border-color: rgba(37, 99, 235, 0.1);
+        }
+
+        .topic-item.mastered .topic-icon {
+            color: #10b981;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .topic-item.weak .topic-icon {
+            color: #ef4444;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .topic-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--navy-dark);
+            text-align: left;
+        }
+
+        /* Horizontal Bar Chart Styles */
+        .chart-bar-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.65rem;
+            width: 100%;
+        }
+
+        .chart-bar-label {
+            width: 200px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--navy-dark);
+            text-align: right;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chart-bar-wrapper {
+            flex-grow: 1;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            height: 14px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .chart-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--blue-accent), #3b82f6);
+            border-radius: 4px;
+            transition: width 0.6s ease-in-out;
+        }
+
+        .chart-bar-value {
+            width: 100px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        /* Algorithm Comparison Table Styles */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+
+        .comparison-table th {
+            background-color: var(--navy-dark);
+            color: #ffffff;
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .comparison-table td {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background-color: var(--bg-color);
+        }
+
+        .comparison-table tr:hover {
+            background-color: rgba(37, 99, 235, 0.03);
+        }
+
+        .comparison-table .best-metric {
+            font-weight: 700;
+            color: #10b981;
+            background-color: rgba(16, 185, 129, 0.06);
+        }
+
+        /* Lightbox Modal Styles */
+        .lightbox-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            padding-top: 50px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(15, 23, 42, 0.95);
+        }
+
+        .lightbox-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 85%;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            animation: zoom 0.3s;
+        }
+
+        @keyframes zoom {
+            from {transform:scale(0)}
+            to {transform:scale(1)}
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .lightbox-close:hover,
+        .lightbox-close:focus {
+            color: #ef4444;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .image-zoom-container {
+            overflow: hidden;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .lightbox-trigger:hover {
+            transform: scale(1.01);
+            border-color: var(--blue-accent);
+        }
+
+        /* RL Recommendation Pipeline Styles */
+        .pipeline-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            width: 100%;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .pipeline-step {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            flex-grow: 1;
+            flex-basis: 120px;
+            transition: var(--transition);
+        }
+
+        .pipeline-step:hover {
+            transform: translateY(-2px);
+            border-color: var(--blue-accent);
+            box-shadow: var(--shadow);
+        }
+
+        .pipeline-icon {
+            font-size: 1.25rem;
+            color: var(--blue-accent);
+        }
+
+        .pipeline-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--navy-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .pipeline-arrow {
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        /* Footer Card Layout */
+        .footer-card {
+            background-color: var(--navy-dark);
+            color: #94a3b8;
+            border: none;
+            text-align: center;
+            padding: 2.5rem 1.5rem;
+        }
+
+        .footer-card:hover {
+            transform: none;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-logo-box {
+            background-color: rgba(255, 255, 255, 0.08);
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .footer-logo span {
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .footer-card p {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .footer-card .placeholder {
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        /* Responsive Layout styles */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 0.75rem;
+                padding: 1rem;
+            }
+            .navbar-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.25rem;
+            }
+            .dashboard-container {
+                margin: 1.5rem auto;
+                padding: 0 1rem;
+                gap: 1.5rem;
+            }
+            .card {
+                padding: 1.5rem;
+            }
+            .hero-card h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Navigation Bar -->
+    <nav class="navbar">
+        <a href="#dashboard" class="navbar-brand">
+            <div class="navbar-brand-logo">J</div>
+            <span>JavaRL System</span>
+        </a>
+        <div class="navbar-menu">
+            <a href="#dashboard" class="nav-link active">🏠 Dashboard</a>
+            <a href="#learner-rec" class="nav-link">👤 Learner Recommendation</a>
+            <a href="#pop-analytics" class="nav-link">📊 Population Analytics</a>
+            <a href="#kg-perf" class="nav-link">📈 KG & Performance</a>
+            <a href="#ai-decision" class="nav-link">🧠 AI Decision</a>
+            <a href="#about" class="nav-link">⚙ About Project</a>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="dashboard-container">
+
+        <!-- Page 1: Dashboard -->
+        <div id="dashboard" class="spa-page active">
+            <!-- 1. Header -->
+            <section id="header" class="card hero-card">
+                <div class="hero-status-row">
+                    <div class="hero-badge status-success">✔ Simulation Completed Successfully</div>
+                    <div class="hero-subtitle">Knowledge Graph + Reinforcement Learning</div>
+                </div>
+                <h2>AI-Powered Java Learning Recommendation System</h2>
+                <p class="hero-description">Personalized Curriculum Optimization using Deep Reinforcement Learning</p>
+                <div class="hero-stats-grid">
+                    <div class="hero-stat-card">
+                        <span class="hero-stat-label">Synthetic Learners</span>
+                        <span class="hero-stat-value">120</span>
+                    </div>
+                    <div class="hero-stat-card">
+                        <span class="hero-stat-label">Java Topics</span>
+                        <span class="hero-stat-value">24</span>
+                    </div>
+                    <div class="hero-stat-card">
+                        <span class="hero-stat-label">Learning Resources</span>
+                        <span class="hero-stat-value">90</span>
+                    </div>
+                    <div class="hero-stat-card">
+                        <span class="hero-stat-label">Training Epochs</span>
+                        <span class="hero-stat-value">3</span>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- 2. Simulation Summary -->
+            <section id="sim-summary" class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                    </div>
+                    <h3>Simulation Summary</h3>
+                </div>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        </div>
+                        <div class="stat-card-info">
+                            <span class="stat-card-title">Total Synthetic Learners</span>
+                            <span class="stat-card-value">120</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
+                        </div>
+                        <div class="stat-card-info">
+                            <span class="stat-card-title">Training Learners</span>
+                            <span class="stat-card-value">96</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </div>
+                        <div class="stat-card-info">
+                            <span class="stat-card-title">Validation Learners</span>
+                            <span class="stat-card-value">12</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                        </div>
+                        <div class="stat-card-info">
+                            <span class="stat-card-title">Testing Learners</span>
+                            <span class="stat-card-value">12</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                        </div>
+                        <div class="stat-card-info">
+                            <span class="stat-card-title">Knowledge Points</span>
+                            <span class="stat-card-value">24</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                        </div>
+                        <div class="stat-card-info">
+                            <span class="stat-card-title">Knowledge Graph Edges</span>
+                            <span class="stat-card-value">24</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                        </div>
+                        <div class="stat-card-info">
+                            <span class="stat-card-title">Training Epochs</span>
+                            <span class="stat-card-value">3</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                        </div>
+                        <div class="stat-card-info">
+                            <span class="stat-card-title">Learning Resources</span>
+                            <span class="stat-card-value">90</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        </div>
+                        <div class="stat-card-info">
+                            <span class="stat-card-title">Simulation Runtime</span>
+                            <span class="stat-card-value">152.2s</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- 3. AI Recommendation Summary -->
+            <section id="ai-rec" class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    </div>
+                    <h3>AI Recommendation Summary</h3>
+                </div>
+                <div class="rec-info-grid">
+                    <div class="rec-info-item">
+                        <span class="rec-info-label">Current Mastery</span>
+                        <span class="rec-info-value">29.2%</span>
+                    </div>
+                    <div class="rec-info-item">
+                        <span class="rec-info-label">Recommended Topic</span>
+                        <span class="rec-info-value">04. Arrays and String Manipulation</span>
+                    </div>
+                    <div class="rec-info-item">
+                        <span class="rec-info-label">Confidence</span>
+                        <span class="rec-info-value">15.1%</span>
+                    </div>
+                    <div class="rec-info-item">
+                        <span class="rec-info-label">Expected Mastery</span>
+                        <span class="rec-info-value">33.3%</span>
+                    </div>
+                </div>
+                <div class="rec-reason-card">
+                    <div class="rec-reason-icon">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    </div>
+                    <div class="rec-reason-content">
+                        <span class="rec-reason-title">Reason</span>
+                        <span class="rec-reason-text">This topic has all prerequisites satisfied (03. Methods and Scope), maximizes expected cognitive gain (+28.9%), and achieved the highest reinforcement learning confidence (15.1%) among all candidates.</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Page 2: Learner Recommendation -->
+        <div id="learner-rec" class="spa-page">
+            <!-- 4. Sample Learner Recommendation -->
+            <section id="sample-learner" class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </div>
+                    <h3>Sample Learner Recommendation</h3>
+                </div>
+                
+                <h4 style="font-size: 1rem; font-weight: 700; color: var(--navy-dark); border-left: 4px solid var(--blue-accent); padding-left: 0.5rem; margin-top: 0.5rem; text-align: left;">Learner Profile</h4>
+                
+    <div class="rec-info-grid">
+        <div class="rec-info-item">
+            <span class="rec-info-label">Learner ID</span>
+            <span class="rec-info-value">learner_0014</span>
+        </div>
+        <div class="rec-info-item">
+            <span class="rec-info-label">Learning Level</span>
+            <span class="rec-info-value">Beginner</span>
+        </div>
+        <div class="rec-info-item">
+            <span class="rec-info-label">Current Mastery</span>
+            <span class="rec-info-value">29.2%</span>
+        </div>
+    </div>
+    
+                
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 0.5rem 0;">
+                
+                <h4 style="font-size: 1rem; font-weight: 700; color: var(--navy-dark); border-left: 4px solid var(--blue-accent); padding-left: 0.5rem; text-align: left;">AI Recommendation</h4>
+                
+    <div class="rec-info-grid">
+        <div class="rec-info-item">
+            <span class="rec-info-label">Recommended Topic</span>
+            <span class="rec-info-value">04. Arrays and String Manipulation</span>
+        </div>
+        <div class="rec-info-item">
+            <span class="rec-info-label">Confidence</span>
+            <span class="rec-info-value">15.1%</span>
+        </div>
+        <div class="rec-info-item">
+            <span class="rec-info-label">Alternative Topic</span>
+            <span class="rec-info-value">08. Polymorphism and Interfaces</span>
+        </div>
+        <div class="rec-info-item">
+            <span class="rec-info-label">Expected Mastery</span>
+            <span class="rec-info-value">33.3%</span>
+        </div>
+        <div class="rec-info-item">
+            <span class="rec-info-label">Est. Study Time</span>
+            <span class="rec-info-value">3.5 hours</span>
+        </div>
+    </div>
+    
+                
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 0.5rem 0;">
+                
+                <h4 style="font-size: 1rem; font-weight: 700; color: var(--navy-dark); border-left: 4px solid var(--blue-accent); padding-left: 0.5rem; text-align: left;">Completed Topics</h4>
+                <div class="topic-list">
+            <div class="topic-item mastered">
+                <span class="topic-icon">✔</span>
+                <span class="topic-name">00. Introduction to Java & Environment Setup</span>
+            </div>
+            
+            <div class="topic-item mastered">
+                <span class="topic-icon">✔</span>
+                <span class="topic-name">01. Variables, Data Types, and Operators</span>
+            </div>
+            
+            <div class="topic-item mastered">
+                <span class="topic-icon">✔</span>
+                <span class="topic-name">02. Control Flow Statements</span>
+            </div>
+            
+            <div class="topic-item mastered">
+                <span class="topic-icon">✔</span>
+                <span class="topic-name">03. Methods and Scope</span>
+            </div>
+            
+            <div class="topic-item mastered">
+                <span class="topic-icon">✔</span>
+                <span class="topic-name">05. Introduction to Classes and Objects</span>
+            </div>
+            
+            <div class="topic-item mastered">
+                <span class="topic-icon">✔</span>
+                <span class="topic-name">06. Encapsulation and Access Modifiers</span>
+            </div>
+            
+            <div class="topic-item mastered">
+                <span class="topic-icon">✔</span>
+                <span class="topic-name">07. Inheritance and Method Overriding</span>
+            </div>
+            </div>
+                
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 0.5rem 0;">
+                
+                <h4 style="font-size: 1rem; font-weight: 700; color: var(--navy-dark); border-left: 4px solid var(--blue-accent); padding-left: 0.5rem; text-align: left;">Weak Topics</h4>
+                <div class="topic-list">
+            <div class="topic-item weak">
+                <span class="topic-icon">✘</span>
+                <span class="topic-name">04. Arrays and String Manipulation</span>
+            </div>
+            
+            <div class="topic-item weak">
+                <span class="topic-icon">✘</span>
+                <span class="topic-name">08. Polymorphism and Interfaces</span>
+            </div>
+            
+            <div class="topic-item weak">
+                <span class="topic-icon">✘</span>
+                <span class="topic-name">09. Abstract Classes and Inner Classes</span>
+            </div>
+            
+            <div class="topic-item weak">
+                <span class="topic-icon">✘</span>
+                <span class="topic-name">10. Exception Handling Basics</span>
+            </div>
+            
+            <div class="topic-item weak">
+                <span class="topic-icon">✘</span>
+                <span class="topic-name">11. Custom Exceptions and Throws</span>
+            </div>
+            
+            <div class="topic-item weak">
+                <span class="topic-icon">✘</span>
+                <span class="topic-name">12. Java Generics</span>
+            </div>
+            
+            <div class="topic-item weak">
+                <span class="topic-icon">✘</span>
+                <span class="topic-name">13. Java Collections: Lists & Sets</span>
+            </div>
+            
+            <div class="topic-item weak">
+                <span class="topic-icon">✘</span>
+                <span class="topic-name">14. Java Collections: Maps</span>
+            </div>
+            
+            <div class="topic-item weak">
+                <span class="topic-icon">✘</span>
+                <span class="topic-name">15. File I/O and NIO</span>
+            </div>
+            
+            <div class="topic-item weak">
+                <span class="topic-icon">✘</span>
+                <span class="topic-name">16. Object Serialization</span>
+            </div>
+            
+            <div class="topic-item weak">
+                <span class="topic-icon">✘</span>
+                <span class="topic-name">17. Functional Programming</span>
+            </div>
+            
+            <div class="topic-item weak">
+                <span class="topic-icon">✘</span>
+                <span class="topic-name">18. Streams API</span>
+            </div>
+            
+            <div class="topic-item weak">
+                <span class="topic-icon">✘</span>
+                <span class="topic-name">19. Multithreading Basics</span>
+            </div>
+            
+            <div class="topic-item weak">
+                <span class="topic-icon">✘</span>
+                <span class="topic-name">20. Synchronization</span>
+            </div>
+            
+            <div class="topic-item weak">
+                <span class="topic-icon">✘</span>
+                <span class="topic-name">21. Thread Pools and Executors</span>
+            </div>
+            
+            <div class="topic-item weak">
+                <span class="topic-icon">✘</span>
+                <span class="topic-name">22. JDBC Database Access</span>
+            </div>
+            
+            <div class="topic-item weak">
+                <span class="topic-icon">✘</span>
+                <span class="topic-name">23. Reflection API</span>
+            </div>
+            </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- 5. Personalized Learning Path -->
+            <section id="learning-path" class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                    </div>
+                    <h3>Personalized Learning Path</h3>
+                </div>
+                <div class="path-container">
+                    
+        <div class="path-node mastered">
+            <span class="path-node-badge">✔ Mastered</span>
+            <span class="path-node-title">00. Introduction to Java & Environment Setup</span>
+            <span class="path-node-score">Mastery: 91.6%</span>
+        </div>
+        <div class="path-arrow"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg></div>
+        <div class="path-node mastered">
+            <span class="path-node-badge">✔ Mastered</span>
+            <span class="path-node-title">01. Variables, Data Types, and Operators</span>
+            <span class="path-node-score">Mastery: 97.6%</span>
+        </div>
+        <div class="path-arrow"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg></div>
+        <div class="path-node mastered">
+            <span class="path-node-badge">✔ Mastered</span>
+            <span class="path-node-title">02. Control Flow Statements</span>
+            <span class="path-node-score">Mastery: 91.7%</span>
+        </div>
+        <div class="path-arrow"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg></div>
+        <div class="path-node mastered">
+            <span class="path-node-badge">✔ Mastered</span>
+            <span class="path-node-title">03. Methods and Scope</span>
+            <span class="path-node-score">Mastery: 85.8%</span>
+        </div>
+        <div class="path-arrow"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg></div>
+        <div class="path-node active">
+            <span class="path-node-badge">★ Target</span>
+            <span class="path-node-title">04. Arrays and String Manipulation</span>
+            <span class="path-node-score">Mastery: 45.1%</span>
+        </div>
+        
+                </div>
+            </section>
+        </div>
+
+        <!-- Page 3: Population Analytics -->
+        <div id="pop-analytics" class="spa-page">
+            <!-- 8. Population Summary Stats -->
+            <section id="pop-summary" class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    </div>
+                    <h3>Population Summary Statistics</h3>
+                </div>
+                <div class="stat-grid">
+                    <!-- Total Learners -->
+                    <div class="stat-card">
+                        <div class="stat-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                        </div>
+                        <div class="stat-card-info">
+                            <span class="stat-card-title">Total Learners</span>
+                            <span class="stat-card-value">120</span>
+                        </div>
+                    </div>
+                    <!-- Average Mastery -->
+                    <div class="stat-card">
+                        <div class="stat-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        </div>
+                        <div class="stat-card-info">
+                            <span class="stat-card-title">Avg. Initial Mastery</span>
+                            <span class="stat-card-value">2.6%</span>
+                        </div>
+                    </div>
+                    <!-- Average Expected Mastery -->
+                    <div class="stat-card">
+                        <div class="stat-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                        </div>
+                        <div class="stat-card-info">
+                            <span class="stat-card-title">Avg. Expected Mastery</span>
+                            <span class="stat-card-value">6.3%</span>
+                        </div>
+                    </div>
+                    <!-- Most Mastered Topic -->
+                    <div class="stat-card">
+                        <div class="stat-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        </div>
+                        <div class="stat-card-info">
+                            <span class="stat-card-title">Most Mastered Topic</span>
+                            <span class="stat-card-value" style="font-size: 0.9rem; font-weight: 700; color: var(--navy-dark); line-height: 1.2;">00. Introduction to Java & Environment Setup</span>
+                        </div>
+                    </div>
+                    <!-- Most Difficult Topic -->
+                    <div class="stat-card">
+                        <div class="stat-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        </div>
+                        <div class="stat-card-info">
+                            <span class="stat-card-title">Most Difficult Topic</span>
+                            <span class="stat-card-value" style="font-size: 0.9rem; font-weight: 700; color: var(--navy-dark); line-height: 1.2;">04. Arrays and String Manipulation</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- 8.5 Population Insights -->
+            <section id="pop-insights" class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    </div>
+                    <h3>Population Insights Summary</h3>
+                </div>
+                <div class="rec-reason-card" style="margin-top: 1rem; border-color: rgba(37, 99, 235, 0.15); background-color: rgba(37, 99, 235, 0.02);">
+                    <div class="rec-reason-icon">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                    </div>
+                    <div class="rec-reason-content" style="text-align: left;">
+                        <span class="rec-reason-title" style="font-size: 0.85rem; color: var(--navy-dark);">Dynamic Analytics Report</span>
+                        <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5; margin-top: 0.25rem;">An analysis of the complete synthetic learner population (N = 120 learners) reveals an average initial mastery of <b>2.6%</b>. The population is primarily composed of <b>Beginner learners</b>, with <b>99.2%</b> classified as Beginner, <b>0.8%</b> as Intermediate, and <b>0.0%</b> as Advanced. The most commonly mastered topic in the cohort is <b>Introduction to Java & Environment Setup</b> (mastered by 11 learners), while <b>Arrays and String Manipulation</b> remains the most difficult concept (unmastered by 120 learners). Under the RL recommendation engine, the top recommendation target is <b>Thread Pools and Executors</b>. Delivering these recommendations is projected to lift the average cohort mastery to <b>6.3%</b>, representing an average expected mastery gain of <b>3.7%</b> across the cohort.</p>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- 9. Population Distribution Charts -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 1.5rem; margin-top: 0.5rem;">
+                
+                <!-- Chart 1: Learner Level Distribution -->
+                <section class="card" style="margin: 0;">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        </div>
+                        <h3>Learner Level Distribution</h3>
+                    </div>
+                    <div style="padding: 1.5rem 0 0.5rem 0;">
+                        
+    <div class="chart-bar-container">
+        <span class="chart-bar-label">Beginner (0-40% mastery)</span>
+        <div class="chart-bar-wrapper">
+            <div class="chart-bar" style="width: 99.16666666666667%; background: linear-gradient(90deg, #ef4444, #f87171);"></div>
+        </div>
+        <span class="chart-bar-value">119 (99.2%)</span>
+    </div>
+    <div class="chart-bar-container" style="margin-top: 0.75rem;">
+        <span class="chart-bar-label">Intermediate (41-70% mastery)</span>
+        <div class="chart-bar-wrapper">
+            <div class="chart-bar" style="width: 0.8333333333333334%; background: linear-gradient(90deg, #f59e0b, #fbbf24);"></div>
+        </div>
+        <span class="chart-bar-value">1 (0.8%)</span>
+    </div>
+    <div class="chart-bar-container" style="margin-top: 0.75rem;">
+        <span class="chart-bar-label">Advanced (71-100% mastery)</span>
+        <div class="chart-bar-wrapper">
+            <div class="chart-bar" style="width: 0.0%; background: linear-gradient(90deg, #10b981, #34d399);"></div>
+        </div>
+        <span class="chart-bar-value">0 (0.0%)</span>
+    </div>
+    
+                    </div>
+                </section>
+
+                <!-- Chart 2: Weak Topic Ranking (Top 10) -->
+                <section class="card" style="margin: 0;">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        </div>
+                        <h3>Top 10 Weakest Topics</h3>
+                    </div>
+                    <div style="padding: 1.5rem 0 0.5rem 0;">
+                        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Arrays and String Manipulation">04. Arrays and String Manipulation</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 100.0%; background: linear-gradient(90deg, #f87171, #ef4444);"></div>
+            </div>
+            <span class="chart-bar-value">120 (100.0%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Custom Exceptions and Throws">11. Custom Exceptions and Throws</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 100.0%; background: linear-gradient(90deg, #f87171, #ef4444);"></div>
+            </div>
+            <span class="chart-bar-value">120 (100.0%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Java Collections: Maps">14. Java Collections: Maps</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 100.0%; background: linear-gradient(90deg, #f87171, #ef4444);"></div>
+            </div>
+            <span class="chart-bar-value">120 (100.0%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Reflection API">23. Reflection API</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 100.0%; background: linear-gradient(90deg, #f87171, #ef4444);"></div>
+            </div>
+            <span class="chart-bar-value">120 (100.0%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Abstract Classes and Inner Classes">09. Abstract Classes and Inner Classes</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 99.16666666666667%; background: linear-gradient(90deg, #f87171, #ef4444);"></div>
+            </div>
+            <span class="chart-bar-value">119 (99.2%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Java Generics">12. Java Generics</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 99.16666666666667%; background: linear-gradient(90deg, #f87171, #ef4444);"></div>
+            </div>
+            <span class="chart-bar-value">119 (99.2%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Java Collections: Lists & Sets">13. Java Collections: Lists & Sets</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 99.16666666666667%; background: linear-gradient(90deg, #f87171, #ef4444);"></div>
+            </div>
+            <span class="chart-bar-value">119 (99.2%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Object Serialization">16. Object Serialization</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 99.16666666666667%; background: linear-gradient(90deg, #f87171, #ef4444);"></div>
+            </div>
+            <span class="chart-bar-value">119 (99.2%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Functional Programming">17. Functional Programming</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 99.16666666666667%; background: linear-gradient(90deg, #f87171, #ef4444);"></div>
+            </div>
+            <span class="chart-bar-value">119 (99.2%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Streams API">18. Streams API</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 99.16666666666667%; background: linear-gradient(90deg, #f87171, #ef4444);"></div>
+            </div>
+            <span class="chart-bar-value">119 (99.2%)</span>
+        </div>
+        
+                    </div>
+                </section>
+
+                <!-- Chart 3: Recommended Topic Distribution -->
+                <section class="card" style="margin: 0; grid-column: span 1;">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        </div>
+                        <h3>Recommended Topic Distribution</h3>
+                    </div>
+                    <div style="padding: 1.5rem 0 0.5rem 0;">
+                        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Thread Pools and Executors">21. Thread Pools and Executors</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 100.0%; background: linear-gradient(90deg, #a78bfa, #8b5cf6);"></div>
+            </div>
+            <span class="chart-bar-value">13 (10.8%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Polymorphism and Interfaces">08. Polymorphism and Interfaces</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 92.3076923076923%; background: linear-gradient(90deg, #a78bfa, #8b5cf6);"></div>
+            </div>
+            <span class="chart-bar-value">12 (10.0%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Introduction to Java & Environment Setup">00. Introduction to Java & Environment Setup</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 76.92307692307693%; background: linear-gradient(90deg, #a78bfa, #8b5cf6);"></div>
+            </div>
+            <span class="chart-bar-value">10 (8.3%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Inheritance and Method Overriding">07. Inheritance and Method Overriding</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 76.92307692307693%; background: linear-gradient(90deg, #a78bfa, #8b5cf6);"></div>
+            </div>
+            <span class="chart-bar-value">10 (8.3%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="File I/O and NIO">15. File I/O and NIO</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 76.92307692307693%; background: linear-gradient(90deg, #a78bfa, #8b5cf6);"></div>
+            </div>
+            <span class="chart-bar-value">10 (8.3%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Control Flow Statements">02. Control Flow Statements</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 61.53846153846154%; background: linear-gradient(90deg, #a78bfa, #8b5cf6);"></div>
+            </div>
+            <span class="chart-bar-value">8 (6.7%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Functional Programming">17. Functional Programming</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 61.53846153846154%; background: linear-gradient(90deg, #a78bfa, #8b5cf6);"></div>
+            </div>
+            <span class="chart-bar-value">8 (6.7%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Reflection API">23. Reflection API</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 61.53846153846154%; background: linear-gradient(90deg, #a78bfa, #8b5cf6);"></div>
+            </div>
+            <span class="chart-bar-value">8 (6.7%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Arrays and String Manipulation">04. Arrays and String Manipulation</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 53.84615384615385%; background: linear-gradient(90deg, #a78bfa, #8b5cf6);"></div>
+            </div>
+            <span class="chart-bar-value">7 (5.8%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Introduction to Classes and Objects">05. Introduction to Classes and Objects</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 38.46153846153847%; background: linear-gradient(90deg, #a78bfa, #8b5cf6);"></div>
+            </div>
+            <span class="chart-bar-value">5 (4.2%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Object Serialization">16. Object Serialization</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 38.46153846153847%; background: linear-gradient(90deg, #a78bfa, #8b5cf6);"></div>
+            </div>
+            <span class="chart-bar-value">5 (4.2%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Abstract Classes and Inner Classes">09. Abstract Classes and Inner Classes</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 30.76923076923077%; background: linear-gradient(90deg, #a78bfa, #8b5cf6);"></div>
+            </div>
+            <span class="chart-bar-value">4 (3.3%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Java Collections: Lists & Sets">13. Java Collections: Lists & Sets</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 30.76923076923077%; background: linear-gradient(90deg, #a78bfa, #8b5cf6);"></div>
+            </div>
+            <span class="chart-bar-value">4 (3.3%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Java Collections: Maps">14. Java Collections: Maps</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 30.76923076923077%; background: linear-gradient(90deg, #a78bfa, #8b5cf6);"></div>
+            </div>
+            <span class="chart-bar-value">4 (3.3%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="JDBC Database Access">22. JDBC Database Access</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 30.76923076923077%; background: linear-gradient(90deg, #a78bfa, #8b5cf6);"></div>
+            </div>
+            <span class="chart-bar-value">4 (3.3%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Methods and Scope">03. Methods and Scope</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 23.076923076923077%; background: linear-gradient(90deg, #a78bfa, #8b5cf6);"></div>
+            </div>
+            <span class="chart-bar-value">3 (2.5%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Encapsulation and Access Modifiers">06. Encapsulation and Access Modifiers</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 15.384615384615385%; background: linear-gradient(90deg, #a78bfa, #8b5cf6);"></div>
+            </div>
+            <span class="chart-bar-value">2 (1.7%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Variables, Data Types, and Operators">01. Variables, Data Types, and Operators</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 7.6923076923076925%; background: linear-gradient(90deg, #a78bfa, #8b5cf6);"></div>
+            </div>
+            <span class="chart-bar-value">1 (0.8%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Exception Handling Basics">10. Exception Handling Basics</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 7.6923076923076925%; background: linear-gradient(90deg, #a78bfa, #8b5cf6);"></div>
+            </div>
+            <span class="chart-bar-value">1 (0.8%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Synchronization">20. Synchronization</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 7.6923076923076925%; background: linear-gradient(90deg, #a78bfa, #8b5cf6);"></div>
+            </div>
+            <span class="chart-bar-value">1 (0.8%)</span>
+        </div>
+        
+                    </div>
+                </section>
+
+                <!-- Chart 4: Topic Mastery Distribution -->
+                <section class="card" style="margin: 0; grid-column: span 1;">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        </div>
+                        <h3>Topic Mastery Distribution</h3>
+                    </div>
+                    <div style="padding: 1.5rem 0 0.5rem 0; max-height: 480px; overflow-y: auto;">
+                        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Introduction to Java & Environment Setup">00. Introduction to Java & Environment Setup</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 100.0%;"></div>
+            </div>
+            <span class="chart-bar-value">11 (9.2%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Variables, Data Types, and Operators">01. Variables, Data Types, and Operators</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 100.0%;"></div>
+            </div>
+            <span class="chart-bar-value">11 (9.2%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Control Flow Statements">02. Control Flow Statements</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 90.9090909090909%;"></div>
+            </div>
+            <span class="chart-bar-value">10 (8.3%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Methods and Scope">03. Methods and Scope</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 72.72727272727273%;"></div>
+            </div>
+            <span class="chart-bar-value">8 (6.7%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Introduction to Classes and Objects">05. Introduction to Classes and Objects</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 72.72727272727273%;"></div>
+            </div>
+            <span class="chart-bar-value">8 (6.7%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Encapsulation and Access Modifiers">06. Encapsulation and Access Modifiers</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 45.45454545454545%;"></div>
+            </div>
+            <span class="chart-bar-value">5 (4.2%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Inheritance and Method Overriding">07. Inheritance and Method Overriding</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 27.27272727272727%;"></div>
+            </div>
+            <span class="chart-bar-value">3 (2.5%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Exception Handling Basics">10. Exception Handling Basics</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 27.27272727272727%;"></div>
+            </div>
+            <span class="chart-bar-value">3 (2.5%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Polymorphism and Interfaces">08. Polymorphism and Interfaces</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 18.181818181818183%;"></div>
+            </div>
+            <span class="chart-bar-value">2 (1.7%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="File I/O and NIO">15. File I/O and NIO</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 18.181818181818183%;"></div>
+            </div>
+            <span class="chart-bar-value">2 (1.7%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Multithreading Basics">19. Multithreading Basics</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 18.181818181818183%;"></div>
+            </div>
+            <span class="chart-bar-value">2 (1.7%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Synchronization">20. Synchronization</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 18.181818181818183%;"></div>
+            </div>
+            <span class="chart-bar-value">2 (1.7%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="JDBC Database Access">22. JDBC Database Access</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 18.181818181818183%;"></div>
+            </div>
+            <span class="chart-bar-value">2 (1.7%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Abstract Classes and Inner Classes">09. Abstract Classes and Inner Classes</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 9.090909090909092%;"></div>
+            </div>
+            <span class="chart-bar-value">1 (0.8%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Java Generics">12. Java Generics</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 9.090909090909092%;"></div>
+            </div>
+            <span class="chart-bar-value">1 (0.8%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Java Collections: Lists & Sets">13. Java Collections: Lists & Sets</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 9.090909090909092%;"></div>
+            </div>
+            <span class="chart-bar-value">1 (0.8%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Object Serialization">16. Object Serialization</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 9.090909090909092%;"></div>
+            </div>
+            <span class="chart-bar-value">1 (0.8%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Functional Programming">17. Functional Programming</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 9.090909090909092%;"></div>
+            </div>
+            <span class="chart-bar-value">1 (0.8%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Streams API">18. Streams API</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 9.090909090909092%;"></div>
+            </div>
+            <span class="chart-bar-value">1 (0.8%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Thread Pools and Executors">21. Thread Pools and Executors</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 9.090909090909092%;"></div>
+            </div>
+            <span class="chart-bar-value">1 (0.8%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Arrays and String Manipulation">04. Arrays and String Manipulation</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 0.0%;"></div>
+            </div>
+            <span class="chart-bar-value">0 (0.0%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Custom Exceptions and Throws">11. Custom Exceptions and Throws</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 0.0%;"></div>
+            </div>
+            <span class="chart-bar-value">0 (0.0%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Java Collections: Maps">14. Java Collections: Maps</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 0.0%;"></div>
+            </div>
+            <span class="chart-bar-value">0 (0.0%)</span>
+        </div>
+        
+        <div class="chart-bar-container">
+            <span class="chart-bar-label" title="Reflection API">23. Reflection API</span>
+            <div class="chart-bar-wrapper">
+                <div class="chart-bar" style="width: 0.0%;"></div>
+            </div>
+            <span class="chart-bar-value">0 (0.0%)</span>
+        </div>
+        
+                    </div>
+                </section>
+
+            </div>
+        </div>
+
+        <!-- Page 4: Knowledge Graph & Performance -->
+        <div id="kg-perf" class="spa-page">
+            
+            <!-- 6. Knowledge Graph -->
+            <section id="kg" class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    </div>
+                    <h3>Java Knowledge Graph (DAG)</h3>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 1.5rem; margin-top: 1rem;">
+                    <div class="image-zoom-container">
+                        <img src="./java_learning_knowledge_graph.png" alt="Java Learning Knowledge Graph" class="lightbox-trigger" style="max-width: 100%; border-radius: 8px; border: 1px solid var(--border-color); cursor: zoom-in; box-shadow: var(--shadow); transition: var(--transition);">
+                    </div>
+                    <div class="rec-info-grid" style="width: 100%;">
+                        <div class="rec-info-item">
+                            <span class="rec-info-label">Total Knowledge Points</span>
+                            <span class="rec-info-value">24</span>
+                        </div>
+                        <div class="rec-info-item">
+                            <span class="rec-info-label">Prerequisite Edges</span>
+                            <span class="rec-info-value">24</span>
+                        </div>
+                        <div class="rec-info-item">
+                            <span class="rec-info-label">Learning Resources</span>
+                            <span class="rec-info-value">90</span>
+                        </div>
+                        <div class="rec-info-item">
+                            <span class="rec-info-label">Graph Type</span>
+                            <span class="rec-info-value" style="font-size: 1.1rem;">DAG (Directed Acyclic Graph)</span>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.95rem; color: var(--text-secondary); text-align: left; line-height: 1.5; padding: 0.5rem; background-color: var(--bg-color); border-left: 4px solid var(--blue-accent); margin: 0 0.5rem;">
+                        The Knowledge Graph models prerequisite relationships among Java programming concepts. The reinforcement learning agent uses this prerequisite structure to recommend feasible learning paths while avoiding impossible topic sequences.
+                    </p>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- 7. Performance Graph -->
+            <section id="perf" class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path></svg>
+                    </div>
+                    <h3>Algorithm Performance & Recommendation Quality</h3>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 1.5rem; margin-top: 1rem;">
+                    <div style="display: flex; flex-flow: row wrap; justify-content: center; gap: 1.5rem; width: 100%;">
+                        <div class="image-zoom-container" style="flex: 1 1 320px; max-width: 420px; text-align: center;">
+                            <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.5rem;">Algorithm Performance Comparison</h4>
+                            <img src="./java_learning_algorithm_performance.png" alt="Algorithm Performance Comparison" class="lightbox-trigger" style="width: 100%; border-radius: 8px; border: 1px solid var(--border-color); cursor: zoom-in; box-shadow: var(--shadow); transition: var(--transition);">
+                        </div>
+                        <div class="image-zoom-container" style="flex: 1 1 320px; max-width: 420px; text-align: center;">
+                            <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.5rem;">Recommendation Quality Evaluation</h4>
+                            <img src="./java_learning_recommendation_quality.png" alt="Recommendation Quality Evaluation" class="lightbox-trigger" style="width: 100%; border-radius: 8px; border: 1px solid var(--border-color); cursor: zoom-in; box-shadow: var(--shadow); transition: var(--transition);">
+                        </div>
+                        <div class="image-zoom-container" style="flex: 1 1 320px; max-width: 420px; text-align: center;">
+                            <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.5rem;">Multi-Seed RL Training Reward Curve</h4>
+                            <img src="./java_learning_reward_curve.png" alt="KG - RL Multi-Seed Training Reward Curve" class="lightbox-trigger" style="width: 100%; border-radius: 8px; border: 1px solid var(--border-color); cursor: zoom-in; box-shadow: var(--shadow); transition: var(--transition);">
+                        </div>
+                    </div>
+                    <div class="rec-info-grid" style="width: 100%;">
+                        <div class="rec-info-item">
+                            <span class="rec-info-label">Best Performing Algorithm</span>
+                            <span class="rec-info-value">KG-RL</span>
+                        </div>
+                        <div class="rec-info-item">
+                            <span class="rec-info-label">Highest F1 Score</span>
+                            <span class="rec-info-value">0.717</span>
+                        </div>
+                        <div class="rec-info-item">
+                            <span class="rec-info-label">Evaluation Metrics Used</span>
+                            <span class="rec-info-value">Precision, Recall, F1, MAE, RMSE, G, AMG</span>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.95rem; color: var(--text-secondary); text-align: left; line-height: 1.5; padding: 0.5rem; background-color: var(--bg-color); border-left: 4px solid var(--blue-accent); margin: 0 0.5rem;">
+                        This section displays three core evaluation charts of the recommendation engine. The first chart compares Precision, Recall, and F1-score across all tested algorithms. The second chart evaluates recommendation quality using Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), and Average Mastery Gain (AMG). The third chart tracks the multi-seed Reinforcement Learning training reward convergence across 10 independent random seeds (showing mean, moving average with window=4, and &plusmn;1 standard deviation band) alongside comparative discounted cumulative return (G).
+                    </p>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- 9. Algorithm Comparison -->
+            <section id="algo" class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                    </div>
+                    <h3>Algorithm Comparison Table</h3>
+                </div>
+                <div style="margin-top: 1rem; overflow-x: auto; width: 100%;">
+                    
+    <table class="comparison-table">
+        <thead>
+            <tr>
+                <th>Algorithm</th>
+                <th>Precision</th>
+                <th>Recall</th>
+                <th>F1 Score</th>
+                <th>MAE</th>
+                <th>RMSE</th>
+            </tr>
+        </thead>
+        <tbody>
+    
+            <tr>
+                <td style="font-weight: 700; color: var(--navy-dark);">KG-RL</td>
+                <td>0.679</td>
+                <td>0.760</td>
+                <td class="best-metric">0.717</td>
+                <td class="best-metric">0.173</td>
+                <td class="best-metric">0.307</td>
+            </tr>
+        
+            <tr>
+                <td style="font-weight: 700; color: var(--navy-dark);">CF</td>
+                <td>0.611</td>
+                <td class="best-metric">0.780</td>
+                <td>0.684</td>
+                <td>0.231</td>
+                <td>0.372</td>
+            </tr>
+        
+            <tr>
+                <td style="font-weight: 700; color: var(--navy-dark);">KG-H</td>
+                <td class="best-metric">0.688</td>
+                <td>0.632</td>
+                <td>0.655</td>
+                <td>0.182</td>
+                <td>0.313</td>
+            </tr>
+        
+            <tr>
+                <td style="font-weight: 700; color: var(--navy-dark);">MC</td>
+                <td>0.551</td>
+                <td>0.625</td>
+                <td>0.583</td>
+                <td>0.212</td>
+                <td>0.359</td>
+            </tr>
+        
+            <tr>
+                <td style="font-weight: 700; color: var(--navy-dark);">Rule</td>
+                <td>0.432</td>
+                <td>0.594</td>
+                <td>0.498</td>
+                <td>0.262</td>
+                <td>0.391</td>
+            </tr>
+        </tbody></table>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- 9.2 Performance Insights -->
+            <section id="perf-insights" class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    </div>
+                    <h3>Performance Insights</h3>
+                </div>
+                
+    <div class="rec-info-grid" style="margin-top: 1rem; width: 100%;">
+        <div class="rec-info-item">
+            <span class="rec-info-label">Total Algorithms Evaluated</span>
+            <span class="rec-info-value">5</span>
+        </div>
+        <div class="rec-info-item">
+            <span class="rec-info-label">Highest Precision</span>
+            <span class="rec-info-value">0.688 (KG-H)</span>
+        </div>
+        <div class="rec-info-item">
+            <span class="rec-info-label">Highest Recall</span>
+            <span class="rec-info-value">0.780 (CF)</span>
+        </div>
+        <div class="rec-info-item">
+            <span class="rec-info-label">Highest F1 Score</span>
+            <span class="rec-info-value">0.717 (KG-RL)</span>
+        </div>
+        <div class="rec-info-item">
+            <span class="rec-info-label">Lowest MAE</span>
+            <span class="rec-info-value">0.173 (KG-RL)</span>
+        </div>
+        <div class="rec-info-item">
+            <span class="rec-info-label">Lowest RMSE</span>
+            <span class="rec-info-value">0.307 (KG-RL)</span>
+        </div>
+    </div>
+    <div class="rec-reason-card" style="margin-top: 1rem; border-color: rgba(16, 185, 129, 0.15); background-color: rgba(16, 185, 129, 0.02);">
+        <div class="rec-reason-icon" style="color: #10b981;">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        </div>
+        <div class="rec-reason-content" style="text-align: left;">
+            <span class="rec-reason-title" style="font-size: 0.85rem; color: var(--navy-dark);">Overall Performance Summary</span>
+            <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5; margin-top: 0.25rem;">
+                The comparative evaluation indicates that <b>KG-RL</b> is the overall best-performing algorithm with a peak F1-score of <b>0.717</b>. 
+                Algorithms leveraging topological prerequisite filtering (like KG-RL and KG-H) prevent logically unfeasible concepts from being recommended, leading to highly optimized path trajectories and improved knowledge gains.
+            </p>
+        </div>
+    </div>
+    
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- 9.5 Research Interpretation -->
+            <section id="research-interpretation" class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                    </div>
+                    <h3>Research Interpretation</h3>
+                </div>
+                <div style="text-align: left; margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem;">
+                    <div>
+                        <h4 style="font-size: 1rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.35rem;">Knowledge Graph Functionality and Prerequisite Constraints</h4>
+                        <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">The Knowledge Graph (KG) serves as the primary topological constraint model of the domain curriculum. Traditional recommendation systems (e.g., collaborative filtering) operate on unconstrained spaces, which leads to "cold start" anomalies and logical ordering errors. By casting prerequisite relationships as a Directed Acyclic Graph (DAG), the system guarantees that learning paths respect concept dependency constraints. For example, a learner is prevented from studying advanced objects or thread synchronization resources before demonstrating mastery of variables and basic classes, preventing frustration and stabilizing learning curves.</p>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 1rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.35rem;">Combining Reinforcement Learning with Topological Constraints</h4>
+                        <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">Reinforcement Learning (RL) is uniquely suited for path planning under uncertainty because it optimizes long-horizon cumulative mastery gains rather than single-step click-through predictions. However, standard RL agents suffer from high sample complexity and search space instability in large discrete environments. In this system, the Knowledge Graph acts as a topological state filter (pruning candidates). The agent only selects actions from the pruned, prerequisite-feasible candidate set. This hybrid architecture shrinks the RL action space, speeds up convergence, and ensures safety by guaranteeing that policy-generated recommendations are topologically feasible.</p>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 1rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.35rem;">Comparative Analysis of Recommendation Baselines</h4>
+                        <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">Evaluating multiple recommendation architectures allows the framework to validate the necessity of hybrid planning. Rule-based search provides static logical bounds, but fails to adapt to individual cognitive rates. Collaborative Filtering (CF) generalizes patterns across learners but lacks path cohesion, resulting in semantic leaps. Markov Chains capture short-range transitions but ignore long-term state decay. The evaluation metrics (Precision, Recall, F1, MAE, RMSE) quantify both path accuracy and prediction calibration. High F1-scores reflect effective topic alignment, while lower MAE/RMSE levels indicate well-calibrated expected mastery predictions. The proposed hybrid RL agent leverages both global topological constraints and dynamic cognitive state models to achieve superior average mastery gain (AMG) and long-horizon cumulative return (G).</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Page 5: AI Decision -->
+        <div id="ai-decision" class="spa-page">
+            
+            <!-- 10. RL Decision Example -->
+            <section id="rl-decision" class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                    </div>
+                    <h3>RL Decision Example Summary</h3>
+                </div>
+                <div class="rec-info-grid" style="margin-top: 1rem;">
+                    <div class="rec-info-item">
+                        <span class="rec-info-label">Learner ID</span>
+                        <span class="rec-info-value" style="color: var(--blue-accent); font-family: monospace;">learner_0014</span>
+                    </div>
+                    <div class="rec-info-item">
+                        <span class="rec-info-label">Current Mastery</span>
+                        <span class="rec-info-value">29.2%</span>
+                        <div style="background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 4px; height: 6px; overflow: hidden; width: 100%; margin-top: 0.5rem;">
+                            <div style="height: 100%; width: 29.2%; background: #10b981;"></div>
+                        </div>
+                    </div>
+                    <div class="rec-info-item">
+                        <span class="rec-info-label">RL Selected Topic</span>
+                        <span class="rec-info-value" style="font-weight: 700; color: var(--navy-dark);">04. Arrays and String Manipulation</span>
+                    </div>
+                    <div class="rec-info-item">
+                        <span class="rec-info-label">Selected Action</span>
+                        <span class="rec-info-value" style="font-size: 0.95rem; font-weight: 700; color: var(--navy-dark);">Resource 45 (Primary: 04. Arrays and String Manipulation)</span>
+                    </div>
+                    <div class="rec-info-item">
+                        <span class="rec-info-label">Reward</span>
+                        <span class="rec-info-value" style="color: #10b981; font-weight: 700;">-0.109</span>
+                    </div>
+                    <div class="rec-info-item">
+                        <span class="rec-info-label">Confidence</span>
+                        <span class="rec-info-value">15.1%</span>
+                        <div style="background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 4px; height: 6px; overflow: hidden; width: 100%; margin-top: 0.5rem;">
+                            <div style="height: 100%; width: 15.1%; background: var(--blue-accent);"></div>
+                        </div>
+                    </div>
+                    <div class="rec-info-item">
+                        <span class="rec-info-label">Expected Mastery</span>
+                        <span class="rec-info-value">33.3%</span>
+                        <div style="background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 4px; height: 6px; overflow: hidden; width: 100%; margin-top: 0.5rem;">
+                            <div style="height: 100%; width: 33.3%; background: linear-gradient(90deg, var(--blue-accent), #10b981);"></div>
+                        </div>
+                    </div>
+                    <div class="rec-info-item">
+                        <span class="rec-info-label">Estimated Study Time</span>
+                        <span class="rec-info-value">3.5 hours</span>
+                    </div>
+                    <div class="rec-info-item">
+                        <span class="rec-info-label">Decision Rank</span>
+                        <span class="rec-info-value" style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary);">Rank #8 of 12 Candidates (Q-Value Pruned)</span>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- RL Decision Process Visual Pipeline -->
+            <section id="rl-pipeline" class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                    </div>
+                    <h3>RL Recommendation Pipeline</h3>
+                </div>
+                <div class="pipeline-container">
+                    <div class="pipeline-step">
+                        <div class="pipeline-icon">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        </div>
+                        <span class="pipeline-label" style="font-size: 0.7rem; text-align: center;">Current Learner State</span>
+                    </div>
+                    <span class="pipeline-arrow">➔</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-icon">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                        </div>
+                        <span class="pipeline-label" style="font-size: 0.7rem; text-align: center;">Knowledge Graph</span>
+                    </div>
+                    <span class="pipeline-arrow">➔</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-icon">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                        </div>
+                        <span class="pipeline-label" style="font-size: 0.7rem; text-align: center;">RL Policy Evaluation</span>
+                    </div>
+                    <span class="pipeline-arrow">➔</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-icon">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                        </div>
+                        <span class="pipeline-label" style="font-size: 0.7rem; text-align: center;">Candidate Topics</span>
+                    </div>
+                    <span class="pipeline-arrow">➔</span>
+                    <div class="pipeline-step">
+                        <div class="pipeline-icon">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon></svg>
+                        </div>
+                        <span class="pipeline-label" style="font-size: 0.7rem; text-align: center;">Highest Reward Action</span>
+                    </div>
+                    <span class="pipeline-arrow">➔</span>
+                    <div class="pipeline-step" style="border-color: var(--blue-accent); background-color: rgba(37, 99, 235, 0.03);">
+                        <div class="pipeline-icon" style="color: var(--blue-accent);">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        </div>
+                        <span class="pipeline-label" style="color: var(--blue-accent); font-size: 0.7rem; text-align: center;">Final Recommendation</span>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- Selection Rationale -->
+            <section id="rl-rationale" class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    </div>
+                    <h3>Recommendation Selection Rationale</h3>
+                </div>
+                
+    <ul style="list-style: none; padding: 0; text-align: left; display: flex; flex-direction: column; gap: 1rem;">
+        <li style="display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.95rem; color: var(--text-secondary);">
+            <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; line-height: 1;">✔</span>
+            <div>
+                <strong style="color: var(--navy-dark);">Prerequisite Satisfaction:</strong> All prerequisite topics (<i>03. Methods and Scope</i> (86%)) are satisfied with mastery scores exceeding the threshold (&tau; = 50%).
+            </div>
+        </li>
+        <li style="display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.95rem; color: var(--text-secondary);">
+            <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; line-height: 1;">✔</span>
+            <div>
+                <strong style="color: var(--navy-dark);">Expected Mastery Gain:</strong> Selecting this topic yields a projected immediate mastery gain of <b style="color: #10b981;">+28.9%</b> across relevant concepts, maximizing short-term educational yield.
+            </div>
+        </li>
+        <li style="display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.95rem; color: var(--text-secondary);">
+            <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; line-height: 1;">✔</span>
+            <div>
+                <strong style="color: var(--navy-dark);">Reward Value:</strong> The Reinforcement Learning agent predicted a step reward value of <b>-0.109</b>, indicating high long-horizon learning path efficiency.
+            </div>
+        </li>
+        <li style="display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.95rem; color: var(--text-secondary);">
+            <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; line-height: 1;">✔</span>
+            <div>
+                <strong style="color: var(--navy-dark);">Policy Confidence:</strong> Selection confidence of <b>15.1%</b> is the highest among all candidate topics considered, exceeding the alternative topic choice (<i>08. Polymorphism and Interfaces</i> at <b>13.0%</b>).
+            </div>
+        </li>
+        <li style="display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.95rem; color: var(--text-secondary);">
+            <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; line-height: 1;">✔</span>
+            <div>
+                <strong style="color: var(--navy-dark);">Cognitive Fit:</strong> Matches the student's learning profile (level: <b>Beginner</b>, current cumulative mastery: <b>29.2%</b>) to guarantee optimized cognitive load without causing learner frustration or disengagement.
+            </div>
+        </li>
+    </ul>
+    
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- Candidate Topic Comparison -->
+            <section id="rl-comparison" class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                    </div>
+                    <h3>Top 5 Candidates Considered by PPO Policy</h3>
+                </div>
+                <div style="margin-top: 1rem; overflow-x: auto; width: 100%;">
+                    
+    <table class="comparison-table">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Topic</th>
+                <th>Estimated Reward (Q-value)</th>
+                <th>Confidence</th>
+                <th>Predicted Mastery Gain</th>
+            </tr>
+        </thead>
+        <tbody>
+    
+            <tr style="background-color: rgba(37, 99, 235, 0.08); font-weight: 700; border-left: 4px solid var(--blue-accent);">
+                <td>#1</td>
+                <td style="text-align: left; font-weight: 600;">04. Arrays and String Manipulation <span class="path-node-badge" style="background-color: rgba(37, 99, 235, 0.15); color: var(--blue-accent); font-size: 0.65rem; margin-left: 0.5rem; padding: 0.15rem 0.4rem;">★ Selected</span></td>
+                <td>7.1983</td>
+                <td>15.1%</td>
+                <td style="color: #10b981; font-weight: 600;">+28.9%</td>
+            </tr>
+        
+            <tr>
+                <td>#2</td>
+                <td style="text-align: left; font-weight: 600;">08. Polymorphism and Interfaces</td>
+                <td>7.5819</td>
+                <td>13.0%</td>
+                <td style="color: #10b981; font-weight: 600;">+23.4%</td>
+            </tr>
+        
+            <tr>
+                <td>#3</td>
+                <td style="text-align: left; font-weight: 600;">08. Polymorphism and Interfaces</td>
+                <td>7.5814</td>
+                <td>13.0%</td>
+                <td style="color: #10b981; font-weight: 600;">+22.8%</td>
+            </tr>
+        
+            <tr>
+                <td>#4</td>
+                <td style="text-align: left; font-weight: 600;">16. Object Serialization</td>
+                <td>8.2065</td>
+                <td>12.6%</td>
+                <td style="color: #10b981; font-weight: 600;">+24.3%</td>
+            </tr>
+        
+            <tr>
+                <td>#5</td>
+                <td style="text-align: left; font-weight: 600;">16. Object Serialization</td>
+                <td>8.1121</td>
+                <td>12.2%</td>
+                <td style="color: #10b981; font-weight: 600;">+24.0%</td>
+            </tr>
+        </tbody></table>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <!-- Decision Interpretation -->
+            <section id="rl-interpretation" class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                    </div>
+                    <h3>Decision Interpretation</h3>
+                </div>
+                <div style="text-align: left; margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem;">
+                    <div>
+                        <h4 style="font-size: 1rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.35rem;">Reinforcement Learning State Observations</h4>
+                        <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">At this decision step, the RL agent observes the learner's current mastery vector s(t). This vector acts as a dynamic state descriptor representing cognitive familiarity across all Java concepts. In addition, the agent incorporates last-visit timestamps to account for memory decay and forgetting dynamics. By observing the entire state vector rather than localized errors, the policy assesses whether the learner has the cognitive capacity to study the candidate topic without cognitive overload.</p>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 1rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.35rem;">Topological Constraint Filtering</h4>
+                        <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">Before the policy evaluates any recommendations, the Knowledge Graph (KG) restricts the candidate action set. Any resource whose primary knowledge point has prerequisites with mastery scores below the feasibility threshold (tau = 0.50) is pruned. This hard constraint restricts the action space to only prerequisite-feasible options, preventing the RL agent from taking invalid actions that would violate the topological constraints of the curriculum structure.</p>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 1rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.35rem;">Expected Learning Gain and Policy Rewards</h4>
+                        <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">The selected topic achieved the highest expected reward because it maximizes the projected mastery gain across the involved concepts. The reward function (Eq. 10) rewards improvements on both the primary topic and related semantic concepts through graph propagation. The policy selects the action that balances immediate mastery improvement with long-term curriculum progression, ensuring that the student is recommended the most effective next step for their personalized learning path.</p>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 1rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.35rem;">Dynamic Curricular Optimization and Personalized Pedagogy</h4>
+                        <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">By continuously adapting to the student's evolving cognitive state, the policy shifts from static sequencing to dynamic pedagogical planning. This prevents two major failure modes in curriculum design: cognitive overload (attempting concepts without sufficient preparation) and redundant reinforcement (re-studying mastered concepts). The resulting closed-loop feedback system minimizes learning friction, reduces overall study time, and optimizes long-term retention compared to traditional non-adaptive curricula.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Page 6: About Project -->
+        <div id="about" class="spa-page">
+            <section class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    </div>
+                    <h3>About Project</h3>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 1.5rem; text-align: left;">
+                    <div>
+                        <h4 style="font-size: 1.1rem; color: var(--navy-dark); margin-bottom: 0.5rem;">Project Title</h4>
+                        <p style="color: var(--text-secondary);">Personalized Java Programming Learning Path Recommendation System</p>
+                    </div>
+                    <hr style="border: 0; border-top: 1px solid var(--border-color);">
+                    <div>
+                        <h4 style="font-size: 1.1rem; color: var(--navy-dark); margin-bottom: 0.5rem;">Objective</h4>
+                        <p style="color: var(--text-secondary);">To optimize personalized curriculum delivery, concept reinforcement, and learning paths for computer science learners studying Java. By modeling learner mastery states dynamically, the system recommends prerequisite-feasible topics and learning resources to maximize cumulative knowledge gain over time.</p>
+                    </div>
+                    <hr style="border: 0; border-top: 1px solid var(--border-color);">
+                    <div>
+                        <h4 style="font-size: 1.1rem; color: var(--navy-dark); margin-bottom: 0.5rem;">Technologies Used</h4>
+                        <ul style="color: var(--text-secondary); padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.25rem;">
+                            <li><strong>Programming Language:</strong> Python 3</li>
+                            <li><strong>Knowledge Graph Representation:</strong> NetworkX, Matplotlib</li>
+                            <li><strong>Simulation Modeling & Data Processing:</strong> NumPy, Pandas</li>
+                            <li><strong>Reinforcement Learning Strategy:</strong> Custom Prune-then-Select RL policy (TD-based Q-learning state-action candidate pruning + PPO policy selection)</li>
+                        </ul>
+                    </div>
+                    <hr style="border: 0; border-top: 1px solid var(--border-color);">
+                    <div>
+                        <h4 style="font-size: 1.1rem; color: var(--navy-dark); margin-bottom: 0.5rem;">Knowledge Graph</h4>
+                        <p style="color: var(--text-secondary);">A structured curriculum DAG containing key Java programming concepts (Knowledge Points) connected by prerequisite edges and Jaccard-similarity-based semantic edges. Resources map directly onto these knowledge points via a sparse annotation matrix.</p>
+                    </div>
+                    <hr style="border: 0; border-top: 1px solid var(--border-color);">
+                    <div>
+                        <h4 style="font-size: 1.1rem; color: var(--navy-dark); margin-bottom: 0.5rem;">Reinforcement Learning</h4>
+                        <p style="color: var(--text-secondary);">The MDP environment simulates learner population dynamics (direct feedback update, graph-based knowledge propagation, and exponential memory decay). The system trains an RL agent to deliver recommendations that maximize average mastery gain (AMG) and long-horizon cumulative rewards (G).</p>
+                    </div>
+                    <hr style="border: 0; border-top: 1px solid var(--border-color);">
+                    <div>
+                        <h4 style="font-size: 1.1rem; color: var(--navy-dark); margin-bottom: 0.5rem;">Simulation-Based Recommendation</h4>
+                        <p style="color: var(--text-secondary);">The recommendation engine runs rolls out in real time under constraints defined by the Knowledge Graph, evaluating against static baselines such as rule-based search, collaborative filtering, and Markov Chains.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </div>
+
+    <!-- 11. Footer -->
+    <footer id="footer" class="card footer-card" style="margin-top: 3rem; border-radius: 0;">
+        <div class="footer-container">
+            <div class="footer-logo">
+                <div class="footer-logo-box">J</div>
+                <span>JavaRL Recommendation System</span>
+            </div>
+            <p>Footer</p>
+            <p class="placeholder">Content will be generated after simulation.</p>
+        </div>
+    </footer>
+
+    <!-- Vanilla JS SPA Controller -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const navLinks = document.querySelectorAll(".navbar-menu a");
+            const pages = document.querySelectorAll(".spa-page");
+
+            function showPage(pageId) {
+                // Hide all pages
+                pages.forEach(page => {
+                    page.classList.remove("active");
+                });
+
+                // Show target page
+                const targetPage = document.querySelector(pageId);
+                if (targetPage) {
+                    targetPage.classList.add("active");
+                }
+
+                // Update active link style
+                navLinks.forEach(link => {
+                    if (link.getAttribute("href") === pageId) {
+                        link.classList.add("active");
+                    } else {
+                        link.classList.remove("active");
+                    }
+                });
+
+                // Scroll to top of the page container
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+
+            // Handle navbar link click events
+            navLinks.forEach(link => {
+                link.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    const pageId = this.getAttribute("href");
+                    showPage(pageId);
+                    // Update location hash silently (without jumping)
+                    history.pushState(null, null, pageId);
+                });
+            });
+
+            // Handle direct links or browser back/forward buttons
+            window.addEventListener("popstate", function() {
+                const hash = window.location.hash || "#dashboard";
+                showPage(hash);
+            });
+
+            // Initialize the correct tab if hash is present
+            const initialHash = window.location.hash || "#dashboard";
+            showPage(initialHash);
+
+            // Lightbox functionality
+            const lightbox = document.getElementById("lightbox");
+            const lightboxImg = document.getElementById("lightbox-img");
+            const closeBtn = document.querySelector(".lightbox-close");
+
+            document.querySelectorAll(".lightbox-trigger").forEach(img => {
+                img.addEventListener("click", function() {
+                    lightbox.style.display = "block";
+                    lightboxImg.src = this.src;
+                });
+            });
+
+            closeBtn.addEventListener("click", function() {
+                lightbox.style.display = "none";
+            });
+
+            lightbox.addEventListener("click", function(e) {
+                if (e.target === lightbox) {
+                    lightbox.style.display = "none";
+                }
+            });
+        });
+    </script>
+
+    <!-- Lightbox Modal Container -->
+    <div id="lightbox" class="lightbox-modal">
+        <span class="lightbox-close">&times;</span>
+        <img class="lightbox-content" id="lightbox-img">
+    </div>
+
+</body>
+</html>
