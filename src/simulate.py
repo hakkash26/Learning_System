@@ -17,7 +17,7 @@ from .agents.ppo import PPOPolicy, ValueNetwork
 
 GAMMA_PPO = 0.99   # Eq. 11
 GAMMA_Q = 0.95      # Eq. 13
-PRUNE_TOP_M = 12
+PRUNE_TOP_M = 8
 
 
 def expected_gain(kg: KnowledgeGraph, s: np.ndarray, action: int, correctness_model) -> float:
@@ -174,17 +174,24 @@ def run_episode_ours(env: LearningPathEnv, kg: KnowledgeGraph, agent: OursAgent,
         log["primary_kps"].append(info["primary_kp"])
 
         if train:
+            # Multi-objective reward shaping:
+            # 1. Precision incentive: reward useful steps (answered correctly with sufficient gain), penalize wasteful steps
+            usefulness_bonus = 0.08 if (info["correct"] and reward >= 0.01) else -0.04
+            # 2. Coverage/Recall incentive: reward completing unmastered knowledge points
+            coverage_bonus = 0.15 if (s_next[primary_kp] >= 0.85 and s[primary_kp] < 0.85) else 0.0
+            shaped_reward = reward + usefulness_bonus + coverage_bonus
+
             next_candidates = env.candidate_actions() if not done else []
             next_phis = (np.stack([state_action_features(kg, s_next, r) for r in next_candidates])
                          if next_candidates else np.zeros((0, STATE_ACTION_DIM)))
             phi_sa = pruned_phis[idx]
             agent.buffer.push({
-                "phi_sa": phi_sa, "reward": reward, "done": done,
+                "phi_sa": phi_sa, "reward": shaped_reward, "done": done,
                 "next_cand_phis": next_phis,
             })
             trajectory.append({
                 "cand_phis": pruned_phis, "chosen_idx": idx, "old_prob": prob,
-                "reward": reward, "state_phi": state_features(s),
+                "reward": shaped_reward, "state_phi": state_features(s),
             })
         s = s_next
 

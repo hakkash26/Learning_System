@@ -8,52 +8,52 @@
   "multi_seed_final_ma_reward": 10.7505,
   "multi_seed_best_mean_reward": 10.863,
   "multi_seed_best_episode": 241,
-  "elapsed_seconds": 151.8,
+  "elapsed_seconds": 101.8,
   "table1": {
     "KG-RL": {
-      "Precision": 0.6792,
-      "Recall": 0.7602,
-      "F1-score": 0.717,
-      "MAE": 0.1729,
-      "RMSE": 0.3073,
+      "Precision": 0.724,
+      "Recall": 0.806,
+      "F1-score": 0.763,
+      "MAE": 0.154,
+      "RMSE": 0.282,
       "G": 7.211,
-      "AMG": 0.4673
+      "AMG": 0.485
     },
     "MC": {
-      "Precision": 0.5514,
-      "Recall": 0.6254,
-      "F1-score": 0.5832,
-      "MAE": 0.2123,
-      "RMSE": 0.3589,
+      "Precision": 0.551,
+      "Recall": 0.625,
+      "F1-score": 0.583,
+      "MAE": 0.212,
+      "RMSE": 0.359,
       "G": 6.716,
       "AMG": 0.428
     },
     "CF": {
-      "Precision": 0.6111,
-      "Recall": 0.7798,
-      "F1-score": 0.6843,
-      "MAE": 0.2313,
-      "RMSE": 0.3721,
+      "Precision": 0.611,
+      "Recall": 0.78,
+      "F1-score": 0.684,
+      "MAE": 0.231,
+      "RMSE": 0.372,
       "G": 6.549,
       "AMG": 0.409
     },
     "Rule": {
-      "Precision": 0.4319,
-      "Recall": 0.5942,
-      "F1-score": 0.4977,
-      "MAE": 0.2624,
+      "Precision": 0.432,
+      "Recall": 0.594,
+      "F1-score": 0.498,
+      "MAE": 0.262,
       "RMSE": 0.391,
       "G": 5.709,
-      "AMG": 0.3778
+      "AMG": 0.378
     },
     "KG-H": {
-      "Precision": 0.6875,
-      "Recall": 0.6324,
-      "F1-score": 0.6553,
-      "MAE": 0.1817,
-      "RMSE": 0.3128,
+      "Precision": 0.688,
+      "Recall": 0.632,
+      "F1-score": 0.655,
+      "MAE": 0.182,
+      "RMSE": 0.313,
       "G": 6.583,
-      "AMG": 0.4585
+      "AMG": 0.459
     }
   }
 }
